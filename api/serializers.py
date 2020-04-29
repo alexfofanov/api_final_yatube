@@ -5,18 +5,20 @@ from .models import Post, Comment, Group, Follow, User
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
+    author = serializers.SlugRelatedField(slug_field='username', read_only='True')
 
     class Meta:
-        fields = ('id', 'text', 'author', 'pub_date', 'group')
+        fields = '__all__'
+        read_only_fields = ('pub_date',)
         model = Post
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
-
+    author = serializers.SlugRelatedField(slug_field='username', read_only='True')
+    
     class Meta:
-        fields = ('id', 'author', 'post', 'text', 'created')
+        fields = '__all__'
+        read_only_fields = ('created',)
         model = Comment
 
 
@@ -28,7 +30,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user.username')
+    user = serializers.SlugRelatedField(slug_field='username', read_only='True')
     following = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all())
 
     class Meta:
@@ -36,10 +38,7 @@ class FollowSerializer(serializers.ModelSerializer):
         model = Follow    
 
     def validate_following(self, value):
-        user = get_object_or_404(User, username=self.context['request'].user)
-        following = get_object_or_404(User, username=value)
-
-        if Follow.objects.filter(user=user).filter(following=following):
+        if Follow.objects.filter(user = self.context['request'].user).exists():    
             raise serializers.ValidationError('Вы уже продписаны на этого пользователя.')
         return value
         
