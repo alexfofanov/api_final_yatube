@@ -38,7 +38,8 @@ class FollowSerializer(serializers.ModelSerializer):
         model = Follow    
 
     def validate_following(self, value):
-        if Follow.objects.filter(user = self.context['request'].user).exists():    
+        filter_by_user = Follow.objects.filter(user=self.context['request'].user, following__username=value)
+        if filter_by_user.exists():   
             raise serializers.ValidationError('Вы уже продписаны на этого пользователя.')
         return value
         
