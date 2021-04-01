@@ -18,3 +18,5 @@ __pycache__/
 media/
 
 db.sqlite3
+requirements_dev.txt
+.env
