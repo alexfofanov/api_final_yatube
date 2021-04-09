@@ -37,7 +37,7 @@ API для проекта социальной сети YaTube
 Сервис доступен по адресу: http://localhost:8000
 
 ### Технологии:
-+ Python  
++ Python3  
 + Django
 + Django REST Framework  
 + SQLite  
